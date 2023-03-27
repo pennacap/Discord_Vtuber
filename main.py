@@ -35,7 +35,7 @@ async def on_message(message):
 #    if not any(word in message.content for word in nltk.corpus.words.words()):
 #        return
     
-    response = gpt3_turbo_completion(conversations=conversation)
+    response = gpt3_turbo_completion(conversation=conversation)
     await message.reply(content=response)
     conversations+=[{"role":"assistant", "message":"response"}]
         """
