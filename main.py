@@ -12,36 +12,32 @@ from chat import gpt3_turbo_completion, open_file
 token = os.getenv('TOKEN')
 
 bot = commands.Bot(command_prefix='!', intents=discord.Intents.default())
-conversation = []
-
+with open('prompt_chat.txt') as f:
+    conversation = [{"role": "user", "content": f.read()}]
+    
 @bot.event    
 async def on_ready():
     # Notify us when everything is ready!
     # We are logged in and ready to chat and use commands...
     print(f'Logged in as | {bot.user.name}')
-nltk.download('words')
+#nltk.download('words')
 
 @bot.event
 async def on_message(message):
         # Messages with echo set to True are messages sent by the bot...
         # For now we just want to ignore them...
         # Also check if the message is too long
-    print("e")
+    
     if len(message.content) > 70:
         return
-
+    
     # Check if the message contains english words
 #    if not any(word in message.content for word in nltk.corpus.words.words()):
 #        return
-
-    conversation.append(f'CHATTER: {message.content}')
-    text_block = '\n'.join(conversation)
-    prompt = open_file('prompt_chat.txt') 
-    prompt += message.author.name+': '
-    response = gpt3_turbo_completion(prompt)
+    
+    response = gpt3_turbo_completion(conversations=conversation)
     await message.reply(content=response)
-    if not conversation.count('Emily: ' + response):
-        conversation.append(f'Emily: {response}')
+    conversations+=[{"role":"assistant", "message":"response"}]
         """
         client = texttospeech.TextToSpeechClient()
 
@@ -95,7 +91,7 @@ async def on_message(message):
             elif count % 7 == 0:
                 with open("output.txt", "a", encoding='utf-8') as out:
                     out.write("\n")
-        """
+        
         time.sleep(2)
         open('output.txt', 'w', encoding='utf-8').close()
 
@@ -103,6 +99,7 @@ async def on_message(message):
 
         print('------------------------------------------------------')
         os.remove('output.mp3')
+        """
 
 
 
